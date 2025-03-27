@@ -28,6 +28,7 @@ batchsize_forward_time: defaultdict = defaultdict(list)
 @dataclass
 class DPMetadata:
     max_tokens_across_dp: torch.Tensor
+    num_tokens_across_dp: torch.Tensor
     cu_tokens_across_dp_cpu: torch.Tensor
 
 
@@ -91,7 +92,7 @@ def set_forward_context(attn_metadata: Any,
         #TODO device?
         max_tokens_across_dp = torch.max(num_tokens_tensor).to(device="cuda")
         cu_tokens_across_dp_cpu = torch.cumsum(num_tokens_tensor, dim=0)
-        dp_metadata = DPMetadata(max_tokens_across_dp, cu_tokens_across_dp_cpu)
+        dp_metadata = DPMetadata(max_tokens_across_dp, num_tokens_tensor, cu_tokens_across_dp_cpu)
 
     global _forward_context
     prev_context = _forward_context
